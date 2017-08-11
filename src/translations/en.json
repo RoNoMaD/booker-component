@@ -1,0 +1,10 @@
+{
+  "header": {
+    "booker": "Booker",
+    "day": "Day",
+    "slot": "Time",
+    "quantities": "Quantities",
+    "extras": "Extras",
+    "basket": "Shopping cart"
+  }
+}

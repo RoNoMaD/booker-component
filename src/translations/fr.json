@@ -1,0 +1,10 @@
+{
+  "header": {
+    "booker": "Réservation",
+    "day": "Jour",
+    "slot": "Heure",
+    "quantities": "Quantités",
+    "extras": "Extras",
+    "basket": "Panier"
+  }
+}
