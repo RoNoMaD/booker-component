@@ -66,6 +66,7 @@ module.exports = {
             {
               loader: 'css-loader',
               options: {
+                minimize: !CSS_MAPS,
                 modules: true,
                 sourceMap: CSS_MAPS,
                 importLoaders: 1,
@@ -99,7 +100,11 @@ module.exports = {
           use: [
             {
               loader: 'css-loader',
-              options: { sourceMap: CSS_MAPS, importLoaders: 1 }
+              options: {
+                minimize: !CSS_MAPS,
+                sourceMap: CSS_MAPS,
+                importLoaders: 1
+              }
             },
             {
               loader: `postcss-loader`,
@@ -120,6 +125,7 @@ module.exports = {
     ]
   },
   plugins: [
+    new webpack.NoEmitOnErrorsPlugin(),
     new ExtractTextPlugin({
       filename: 'style.css',
       allChunks: true,
@@ -128,9 +134,13 @@ module.exports = {
     new webpack.DefinePlugin({
       API_ENDPOINT: API_ENDPOINT,
       MEDIAS_ENDPOINT: MEDIAS_ENDPOINT
+    }),
+    new webpack.optimize.UglifyJsPlugin({
+      sourceMap: true
     })
   ],
   externals: {
     preact: 'commonjs preact' // this line is just to use the Preact dependency of our parent-testing-project instead of using our own Preact.
-  }
+  },
+  devtool: ENV === 'production' ? 'source-map' : 'cheap-module-eval-source-map'
 };

@@ -4,9 +4,10 @@
     "prettier/flowtype",
     "prettier/react",
     "plugin:react/recommended",
-    "plugin:promise/recommended"
+    "plugin:promise/recommended",
+    "plugin:flowtype/recommended"
   ],
-  "plugins": ["react", "promise"],
+  "plugins": ["react", "promise","flowtype"],
   "env": {
     "es6": true,
     "browser": true

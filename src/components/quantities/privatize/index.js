@@ -1,4 +1,5 @@
 import { h, Component } from 'preact';
+import { Text } from 'preact-i18n';
 
 export default class Privatize extends Component {
   state = {
@@ -10,7 +11,6 @@ export default class Privatize extends Component {
   }
 
   togglePrivatized = e => {
-    console.log(e.target.checked);
     this.setState({
       isPrivatized: e.target.checked
     });
@@ -37,7 +37,7 @@ export default class Privatize extends Component {
     );
     return (
       <div>
-        <div>Privatize this activity</div>
+        <Text id="quantities.privatize">Privatize this activity</Text>
         <div>
           <label class="switch">
             <input
@@ -49,10 +49,13 @@ export default class Privatize extends Component {
           </label>
         </div>
         {showMinimunParticipantsWarning &&
-          <div>
+          <Text
+            id="quantities.minParticipantsToPrivatize"
+            fields={{ minParticipantsToPrivatize }}
+          >
             A minimun of {minParticipantsToPrivatize} is required to privatize
             this activity.
-          </div>}
+          </Text>}
       </div>
     );
   }

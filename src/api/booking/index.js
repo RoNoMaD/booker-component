@@ -129,19 +129,38 @@ export function createBooking(
   company
 ): Promise<any> {
   // create booking from product, quantities, day and slot
-  let booking = {
-    product: {
-      id: product.id,
-      type: product.type
-    },
-    startTime: slot.startDateTime,
-    unitQuantityDeclarations: Array.from(
-      quantities.quantities
-    ).map(([key, value]) => ({
-      unit: { id: key, type: 'TARGET' },
-      quantity: value
-    }))
-  };
+  let booking;
+  if (
+    product._embedded.unit.type === 'MAIN' ||
+    product._embedded.unit.type === 'FORFAIT'
+  ) {
+    booking = {
+      product: {
+        id: product.id,
+        type: product.type
+      },
+      startTime: slot.startDateTime,
+      unitQuantityDeclarations: Array.from(
+        quantities.quantities
+      ).map(([key, value]) => ({
+        unit: { id: key, type: 'TARGET' },
+        quantity: value
+      }))
+    };
+  } else if (product._embedded.unit.type === 'SESSION') {
+    booking = {
+      product: {
+        id: product.id,
+        type: product.type
+      },
+      startTime: slot.startDateTime,
+      unitQuantityDeclarations: quantities.quantities.map(quantity => ({
+        unit: { id: quantity.id, type: 'SESSION' },
+        quantity: quantity.quantity,
+        session_quantity: quantity.numberOfSessions
+      }))
+    };
+  }
   if (quantities.isPrivatized) {
     booking.privatized = quantities.isPrivatized;
   }
@@ -165,6 +184,41 @@ export function createBooking(
     );
   } else if (order) {
     return postBooking(order.id, booking, extras).then(bookings => {
+      order.bookings = order.bookings.concat(bookings);
+      return order;
+    });
+  } else {
+    throw new Error('Provide a company (id and type) or an order (id).');
+  }
+}
+
+export function createGiftBooking(
+  product,
+  quantity,
+  beneficiary,
+  order,
+  company
+) {
+  let booking = {
+    startTime: new Date().toISOString().split('.')[0] + 'Z',
+    product: {
+      id: product.id,
+      type: product.type
+    },
+    quantity,
+    beneficiary: {
+      email: beneficiary.email
+    }
+  };
+  if (!order && company) {
+    return createOrder(company.id, company.type).then(order =>
+      postBooking(order.id, booking).then(bookings => {
+        order.bookings = bookings;
+        return order;
+      })
+    );
+  } else if (order) {
+    return postBooking(order.id, booking).then(bookings => {
       order.bookings = order.bookings.concat(bookings);
       return order;
     });

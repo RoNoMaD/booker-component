@@ -6,5 +6,24 @@
     "quantities": "Quantités",
     "extras": "Extras",
     "basket": "Panier"
-  }
+  },
+  "quantities": {
+    "privatize": "Privatiser cette activité",
+    "price": "Prix {{price}}",
+    "priceFromTo": "Prix de {{minPrice}} à {{maxPrice}}",
+    "minParticipantsToPrivatize": "Un minimun de {{minParticipantsToPrivatize}} est requis pour privatiser cette activité.",
+    "minParticipants": "Un minimum de {{minParticipants}} est requis.",
+    "maxReached": "Le nombre maximun de participant est atteint."
+  },
+  "extras": {
+    "title": "Extras"
+  },
+  "giftBeneficiary": {
+    "title": "Bénéficiaire",
+    "lastName": "Nom",
+    "firstName": "Prénom",
+    "email": "Email",
+    "phone": "Téléphone"
+  },
+  "gift": { "quantity": "Quantité" }
 }

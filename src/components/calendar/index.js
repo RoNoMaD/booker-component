@@ -3,13 +3,19 @@ import { h, Component } from 'preact';
 import styles from './style.scss';
 import CalendarDay from './calendarday';
 
+type Props = {
+  getProductMonthAvailabilities: Function
+};
+
 export default class Calendar extends Component {
   state = {
+    today: undefined,
+    firstDayOfCurrentMonth: undefined,
     loading: true,
     availabilities: []
   };
 
-  constructor(props) {
+  constructor(props: Props) {
     super(props);
     let today = new Date();
     today.setUTCHours(0, 0, 0, 0);
@@ -18,14 +24,13 @@ export default class Calendar extends Component {
     props
       .getProductMonthAvailabilities(today.toISOString())
       .then(availabilities => {
-        console.log(availabilities);
         this.setState({ availabilities, loading: false });
         return availabilities;
       });
     this.setState({ today, firstDayOfCurrentMonth });
   }
 
-  previousMonth = e => {
+  previousMonth = () => {
     this.state.firstDayOfCurrentMonth.setMonth(
       this.state.firstDayOfCurrentMonth.getMonth() - 1
     );
@@ -43,7 +48,7 @@ export default class Calendar extends Component {
       });
   };
 
-  nextMonth = e => {
+  nextMonth = () => {
     this.state.firstDayOfCurrentMonth.setMonth(
       this.state.firstDayOfCurrentMonth.getMonth() + 1
     );

@@ -1,29 +1,37 @@
-import { h, Component } from 'preact';
-// import { Link } from 'preact-router/match';
-// import { Text } from 'preact-i18n';
+// @flow
+import { h } from 'preact';
 import style from './style.scss';
 
-// import UserIcon from '../icons/user';
-// import QuantitiesIcon from '../icons/quantities';
-// import CalendarIcon from '../icons/calendar';
-// import SlotIcon from '../icons/slot';
-// import ExtrasIcon from '../icons/extras';
-// import BasketIcon from '../icons/basket';
-
 import MainHeader from './mainheader';
+import SessionHeader from './sessionheader';
+import GiftHeader from './giftheader';
 
-export default class Header extends Component {
-  render({ currentProduct }) {
-    return (
-      <header class={style.header}>
-        <h1>ACTIVTY Widget</h1>
-        {/*<Link activeClassName={style.active} href="/products/3334/booker/">
-            <Text id="header.booker">Booker</Text>
-          </Link>*/}
-        {currentProduct &&
-          currentProduct.pricingType === 0 &&
-          <MainHeader currentProduct={currentProduct} />}
-      </header>
-    );
-  }
-}
+const Header = ({
+  currentProduct,
+  currentQuantities,
+  currentDay,
+  currentSlot,
+  currentExtrasQuantities
+}) =>
+  <header class={style.header}>
+    {currentProduct &&
+      currentProduct.type === 'CLASSIC' &&
+      (currentProduct._embedded.unit.type === 'MAIN' ||
+        currentProduct._embedded.unit.type === 'FORFAIT') &&
+      <MainHeader
+        currentProduct={currentProduct}
+        currentQuantities={currentQuantities}
+        currentExtrasQuantities={currentExtrasQuantities}
+        currentDay={currentDay}
+        currentSlot={currentSlot}
+      />}
+    {currentProduct &&
+      currentProduct.type === 'CLASSIC' &&
+      currentProduct._embedded.unit.type === 'SESSION' &&
+      <SessionHeader currentProduct={currentProduct} />}
+    {currentProduct &&
+      currentProduct.type === 'GIFT' &&
+      <GiftHeader currentProduct={currentProduct} />}
+  </header>;
+
+export default Header;

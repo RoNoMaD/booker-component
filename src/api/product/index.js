@@ -119,17 +119,38 @@ function setProductUnits(product) {
       });
       product.units = product.units.concat(targetUnits);
     } else if (product._embedded.unit.type === 'SESSION') {
-      // TODO fix that shit
-      // get session unit selling prices with differents number of sessions
-      product.unitQuantities = product._embedded.prices
-        .filter(price => price.type === 'SELLING')
-        .map(price => ({
-          unit: product._embedded.unit,
-          price
-        }))
-        .sort(
-          (uq1, uq2) => uq1.price.numberOfSessions - uq2.price.numberOfSessions
+      // get session unit selling prices
+      product.units = product._embedded.prices
+        .reduce(
+          (prev, curr) =>
+            prev.indexOf(curr.numberOfSessions) === -1
+              ? prev.concat([curr.numberOfSessions])
+              : prev,
+          []
+        )
+        .sort((ns1, ns2) => ns1 - ns2)
+        .map(numberOfSessions =>
+          Object.assign(
+            {
+              id: product._embedded.unit.id,
+              type: product._embedded.unit.type,
+              name: product._embedded.unit.name,
+              plural: product._embedded.unit.plural,
+              sliceQuantity: product._embedded.unit.sliceQuantity
+            },
+            {
+              prices: product._embedded.prices.filter(
+                price => price.numberOfSessions === numberOfSessions
+              )
+            },
+            { numberOfSessions }
+          )
         );
+
+      // product._embedded.unit.prices = product._embedded.prices
+      //   .filter(price => price.type === 'SELLING')
+      //   .sort((p1, p2) => p1.numberOfSessions - p2.numberOfSessions);
+      // product.units = [product._embedded.unit];
     }
   } else if (product.type === 'EXTRA') {
     product.units = [{ price: product._embedded.prices[0] }];

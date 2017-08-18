@@ -14,22 +14,12 @@ $bg-red-gradient: linear-gradient(-60deg, $orange, $red);
   z-index: 50;
 }
 
-.header h1 {
-  float: left;
-  margin: 0;
-  padding: 0 15px;
-  font-size: 24px;
-  line-height: 56px;
-  font-weight: 400;
-  color: #fff;
-}
-
 .header nav {
   float: right;
   font-size: 100%;
 }
 
-.header nav a {
+.header nav div {
   display: inline-block;
   height: 56px;
   line-height: 56px;
@@ -42,11 +32,11 @@ $bg-red-gradient: linear-gradient(-60deg, $orange, $red);
   will-change: background-color;
 }
 
-.header nav a:hover,
+.header nav div:hover,
 .header nav a:active {
   background: rgba(0, 0, 0, 0.2);
 }
 
-.header nav a.active {
+.header nav div.active {
   background: rgba(0, 0, 0, 0.4);
 }

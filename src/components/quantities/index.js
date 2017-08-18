@@ -4,6 +4,7 @@ import { h, Component } from 'preact';
 import style from './style.scss';
 import Button from '../button';
 import UnitsQuantities from './unitsquantities';
+import SessionsQuantities from './sessionsquantities';
 
 export default class Quantities extends Component {
   state = {
@@ -24,8 +25,21 @@ export default class Quantities extends Component {
     return (
       <div class={style.booker}>
         {currentProduct &&
-          currentProduct._embedded.unit.type === 'MAIN' &&
+          (currentProduct._embedded.unit.type === 'MAIN' ||
+            currentProduct._embedded.unit.type === 'FORFAIT') &&
           <UnitsQuantities
+            units={currentProduct.units}
+            minParticipants={currentProduct.minParticipants}
+            maxParticipants={currentProduct.maxParticipants}
+            canBePrivatized={currentProduct.canBePrivatized}
+            minParticipantsToPrivatize={
+              currentProduct.minParticipantsToPrivatize
+            }
+            updateCurrentQuantities={this.updateCurrentQuantities}
+          />}
+        {currentProduct &&
+          currentProduct._embedded.unit.type === 'SESSION' &&
+          <SessionsQuantities
             units={currentProduct.units}
             minParticipants={currentProduct.minParticipants}
             maxParticipants={currentProduct.maxParticipants}

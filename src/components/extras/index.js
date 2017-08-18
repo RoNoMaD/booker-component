@@ -1,5 +1,6 @@
 // @flow
 import { h, Component } from 'preact';
+import { Text } from 'preact-i18n';
 import Extra from './extra';
 import Button from '../button';
 
@@ -41,7 +42,7 @@ export default class Extras extends Component {
   render({ extras }, { quantities }) {
     return (
       <div>
-        <div>Extras</div>
+        <Text id="extras.title">Extras</Text>
         {extras.map(extra =>
           <Extra
             key={extra.id}

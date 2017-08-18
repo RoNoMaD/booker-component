@@ -815,29 +815,94 @@ export function getSessionsProductById(productId, seasonId) {
   ).then(product => setProductUnits(product));
 }
 
+/**
+ *
+ */
 function setProductUnits(product) {
-  if (product._embedded.unit.type === 'MAIN') {
-    // get all the specific units
-    let units = [product._embedded.unit];
-    product.units = units.concat(
-      product._embedded.prices
-        .filter(price => price.type === 'SPECIFIC')
-        .map(price => price._embedded.targetUnit)
-    );
-  } else if (product._embedded.unit.type === 'SESSION') {
-    // get every unique number of sessions for session unit
-    product.unit = product._embedded.unit;
-    product.unit.sessionQuantities = [].concat(
-      product._embedded.prices
-        .filter(price => price.type === 'SELLING')
-        .map(price => price.numberOfSessions)
-        .filter(
-          (numberOfSessions, index, sessionQuantities) =>
-            sessionQuantities.indexOf(numberOfSessions) === index
+  if (product.type === 'CLASSIC') {
+    if (
+      product._embedded.unit.type === 'MAIN' ||
+      product._embedded.unit.type === 'FORFAIT'
+    ) {
+      // get main/forfait unit selling
+      product._embedded.unit.prices = product._embedded.prices.filter(
+        price => price.type === 'SELLING'
+      );
+      // get degressive prices for main unit
+      product._embedded.unit.prices = product._embedded.unit.prices.concat(
+        product._embedded.prices.filter(
+          price =>
+            price.type === 'DEGRESSIVE' &&
+            price._embedded.targetUnit.id === product._embedded.unit.id
         )
-        .sort((p1, p2) => p1.numberOfSessions - p2.numberOfSessions)
-    );
+      );
+      product.units = [product._embedded.unit];
+    }
+    if (product._embedded.unit.type === 'MAIN') {
+      // get all the specific prices
+      let specificPrices = product._embedded.prices.filter(
+        price => price.type === 'SPECIFIC'
+      );
+      // get all the target units
+      let targetUnits = specificPrices
+        .filter(
+          (price, index, prices) =>
+            prices
+              .map(price => price._embedded.targetUnit.id)
+              .indexOf(price._embedded.targetUnit.id) === index
+        )
+        .map(price => price._embedded.targetUnit);
+      // get all the target units specific prices
+      targetUnits = targetUnits.map(targetUnit => {
+        targetUnit.prices = specificPrices.filter(
+          price => price._embedded.targetUnit.id === targetUnit.id
+        );
+        return targetUnit;
+      });
+      // get all the target units degressive prices
+      targetUnits = targetUnits.map(targetUnit => {
+        targetUnit.prices = targetUnit.prices.concat(
+          product._embedded.prices.filter(
+            price =>
+              price.type === 'DEGRESSIVE' &&
+              price._embedded.targetUnit.id === targetUnit.id
+          )
+        );
+        return targetUnit;
+      });
+      product.units = product.units.concat(targetUnits);
+    } else if (product._embedded.unit.type === 'SESSION') {
+      // get session unit selling prices
+      product._embedded.unit.prices = product._embedded.prices
+        .filter(price => price.type === 'SELLING')
+        .sort((p1, p2) => p1.numberOfSessions - p2.numberOfSessions);
+    }
+  } else if (product.type === 'EXTRA') {
+    product.units = [{ price: product._embedded.prices[0] }];
   }
+
+  // if (product._embedded.unit.type === 'MAIN') {
+  //   let units = [product._embedded.unit];
+  //   // get all the specific units
+  //   product.units = units.concat(
+  //     product._embedded.prices
+  //       .filter(price => price.type === 'SPECIFIC')
+  //       .map(price => price._embedded.targetUnit)
+  //   );
+  // } else if (product._embedded.unit.type === 'SESSION') {
+  //   // get every unique number of sessions for session unit
+  //   product.unit = product._embedded.unit;
+  //   product.unit.sessionQuantities = [].concat(
+  //     product._embedded.prices
+  //       .filter(price => price.type === 'SELLING')
+  //       .map(price => price.numberOfSessions)
+  //       .filter(
+  //         (numberOfSessions, index, sessionQuantities) =>
+  //           sessionQuantities.indexOf(numberOfSessions) === index
+  //       )
+  //       .sort((p1, p2) => p1.numberOfSessions - p2.numberOfSessions)
+  //   );
+  // }
   return product;
 }
 

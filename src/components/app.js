@@ -1,6 +1,5 @@
 // @flow
 import { h, Component } from 'preact';
-import { Router, route } from 'preact-router';
 
 import { IntlProvider } from 'preact-i18n';
 import fr from '../translations/fr.json';
@@ -8,26 +7,18 @@ import en from '../translations/en.json';
 
 import ErrorMsg from './error';
 import Header from './header';
-// import Booker from '../routes/booker';
 import Quantities from './quantities';
-// import Quantities from '../routes/quantities';
 import Day from './calendar';
-// import Day from '../routes/day';
 import Slot from './timeslots';
-// import Slot from '../routes/slot';
 import Extras from './extras';
-// import Extras from '../routes/extras';
-// import Basket from '../routes/basket';
-// import Quantities from 'async!../routes/quantities';
-// import Day from 'async!../routes/day';
-// import Slot from 'async!../routes/slot';
-// import Extras from 'async!../routes/extras';
-// import Basket from 'async!../routes/basket';
+import GiftQuantity from './giftquantity';
+import GiftBeneficiary from './giftbeneficiary';
 import { getProductById } from '../api/product';
 import {
   getProductMonthAvailabilities,
   getProductTimeSlotAvailabilities,
-  createBooking
+  createBooking,
+  createGiftBooking
 } from '../api/booking';
 
 export default class App extends Component {
@@ -43,46 +34,49 @@ export default class App extends Component {
     currentExtrasQuantities: undefined,
     currentDay: undefined,
     currentSlot: undefined,
-    currentOrder: undefined
+    currentOrder: undefined,
+    giftQuantity: undefined,
+    giftBeneficiary: undefined
   };
 
   changeLocale = () => {
     this.setState({ locale: en });
   };
 
-  setCurrentProduct = (currentProduct, url: string) => {
-    this.setState({ currentProduct }, () => {
-      route(url);
-    });
-  };
-
   setCurrentQuantities = currentQuantities => {
     let route;
-    if (this.state.currentProduct._embedded.unit.type === 'MAIN') {
+    if (
+      this.state.currentProduct._embedded.unit.type === 'MAIN' ||
+      this.state.currentProduct._embedded.unit.type === 'FORFAIT'
+    ) {
       route = 'day';
+      this.setState({ currentQuantities, route });
+    } else if (this.state.currentProduct._embedded.unit.type === 'SESSION') {
+      this.setState({ currentQuantities }, () => {
+        this.bookProduct();
+      });
     }
-    this.setState({ currentQuantities, route });
   };
 
   getDayAvailabilities = fromDate => {
-    return getProductMonthAvailabilities(
-      this.state.currentProduct.id,
-      fromDate,
-      this.state.currentQuantities.quantities
-    );
+    if (this.state.currentQuantities) {
+      return getProductMonthAvailabilities(
+        this.state.currentProduct.id,
+        fromDate,
+        this.state.currentQuantities.quantities
+      );
+    } else {
+      return getProductMonthAvailabilities(
+        this.state.currentProduct.id,
+        fromDate
+      );
+    }
   };
 
   setCurrentDay = currentDay => {
-    // this.setState({ currentDay }, () => {
-    //   route(`/products/${this.state.currentProduct.id}/booker/slot/`);
-    // });
     let route;
     // TODO handle OPEN BILLET
-    // if (this.state.currentProduct.) {
     route = 'slot';
-    // } else {
-    //   route = 'extra';
-    // }
     this.setState({ currentDay, route });
   };
 
@@ -95,15 +89,21 @@ export default class App extends Component {
 
   setCurrentSlot = currentSlot => {
     if (
-      this.state.currentProduct._embedded.extraProducts &&
-      this.state.currentProduct._embedded.extraProducts.length
+      this.state.currentProduct._embedded.unit.type === 'MAIN' ||
+      this.state.currentProduct._embedded.unit.type === 'FORFAIT'
     ) {
-      this.setState({ currentSlot, route: 'extras' });
-      // route(`/products/${this.state.currentProduct.id}/booker/extras/`);
-    } else {
-      this.setState({ currentSlot }, () => {
-        this.bookProduct();
-      });
+      if (
+        this.state.currentProduct._embedded.extraProducts &&
+        this.state.currentProduct._embedded.extraProducts.length
+      ) {
+        this.setState({ currentSlot, route: 'extras' });
+      } else {
+        this.setState({ currentSlot }, () => {
+          this.bookProduct();
+        });
+      }
+    } else if (this.state.currentProduct._embedded.unit.type === 'SESSION') {
+      this.setState({ currentSlot, route: 'quantities' });
     }
   };
 
@@ -117,11 +117,8 @@ export default class App extends Component {
       this.state.currentOrder,
       this.state.currentCompany
     )
-      // createBooking()
       .then(order => {
-        this.setState({ currentOrder: order }, () => {
-          route(`/products/basket/`);
-        });
+        this.setState({ currentOrder: order });
         return order;
       })
       .catch(error => {
@@ -133,6 +130,23 @@ export default class App extends Component {
     this.setState({ currentExtrasQuantities }, () => {
       this.bookProduct();
     });
+  };
+
+  setGiftQuantity = giftQuantity => {
+    this.setState({ giftQuantity, route: 'giftBeneficiary' });
+  };
+
+  setBeneficiary = currentBeneficiary => {
+    console.log(this.state.giftQuantity);
+    console.log(currentBeneficiary);
+    // TODO create gift booking api method
+    createGiftBooking(
+      this.state.currentProduct,
+      this.state.giftQuantity,
+      currentBeneficiary,
+      this.state.currentOrder,
+      this.state.currentCompany
+    );
   };
 
   componentDidMount() {
@@ -157,6 +171,12 @@ export default class App extends Component {
             route: 'day',
             currentProduct: product
           });
+        } else if (product.type === 'GIFT') {
+          this.setState({
+            loading: false,
+            route: 'giftQuantity',
+            currentProduct: product
+          });
         }
         return product;
       })
@@ -176,6 +196,8 @@ export default class App extends Component {
       currentProduct,
       currentQuantities,
       currentDay,
+      currentSlot,
+      currentExtrasQuantities,
       currentOrder
     }
   ) {
@@ -184,6 +206,14 @@ export default class App extends Component {
         <div id="app">
           {loading && <div>Loading...</div>}
           {error && <ErrorMsg error={error} />}
+          {!loading &&
+            <Header
+              currentProduct={currentProduct}
+              currentQuantities={currentQuantities}
+              currentExtrasQuantities={currentExtrasQuantities}
+              currentDay={currentDay}
+              currentSlot={currentSlot}
+            />}
           {!loading &&
             route === 'quantities' &&
             <Quantities
@@ -206,40 +236,18 @@ export default class App extends Component {
           {!loading &&
             route === 'extras' &&
             <Extras
-              path="/products/:productId/booker/extras/"
               currentProduct={currentProduct}
               setCurrentQuantities={this.setCurrentExtrasQuantities}
             />}
-          {/*<Header currentProduct={currentProduct} />
-          <Router onChange={this.handleRoute}>
-            <Booker
-              path="/products/:productId/booker/"
-              setCurrentProduct={this.setCurrentProduct}
-            />
-            <Quantities
-              path="/products/:productId/booker/quantities/"
-              currentProduct={currentProduct}
-              setCurrentQuantities={this.setCurrentQuantities}
-            />
-            <Day
-              path="/products/:productId/booker/day/"
-              currentProduct={currentProduct}
-              setCurrentDay={this.setCurrentDay}
-              currentQuantities={currentQuantities}
-            />
-            <Slot
-              path="/products/:productId/booker/slot/"
-              currentProduct={currentProduct}
-              currentDay={currentDay}
-              setCurrentSlot={this.setCurrentSlot}
-            />
-            <Extras
-              path="/products/:productId/booker/extras/"
-              currentProduct={currentProduct}
-              setCurrentQuantities={this.setCurrentExtrasQuantities}
-            />
-            <Basket path="/products/basket/" currentOrder={currentOrder} />
-          </Router>*/}
+          {!loading &&
+            route === 'giftQuantity' &&
+            <GiftQuantity
+              maxParticipants={currentProduct.maxParticipants}
+              setGiftQuantity={this.setGiftQuantity}
+            />}
+          {!loading &&
+            route === 'giftBeneficiary' &&
+            <GiftBeneficiary setBeneficiary={this.setBeneficiary} />}
         </div>
       </IntlProvider>
     );

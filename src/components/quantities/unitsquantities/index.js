@@ -1,6 +1,9 @@
 // @flow
 import { h, Component } from 'preact';
+import { Text } from 'preact-i18n';
 import Quantity from '../../quantity';
+import Price from '../price';
+import DegressivePrices from '../degressiveprices';
 import Privatize from '../privatize';
 
 export default class UnitsQuantities extends Component {
@@ -75,22 +78,26 @@ export default class UnitsQuantities extends Component {
           />}
         {units.map((unit, index) => {
           return (
-            <Quantity
-              key={index}
-              unit={unit}
-              quantity={quantities.get(unit.id) || 0}
-              maxReached={maxReached}
-              handleAddUnit={this.addUnit}
-              handleSubUnit={this.subUnit}
-            />
+            <div key={index}>
+              <Quantity
+                unit={unit}
+                quantity={quantities.get(unit.id) || 0}
+                maxReached={maxReached}
+                handleAddUnit={this.addUnit}
+                handleSubUnit={this.subUnit}
+              />
+              {unit.prices && <Price prices={unit.prices} />}
+              {unit.prices && <DegressivePrices prices={unit.prices} />}
+            </div>
           );
         })}
         {minParticipants > 1 &&
           minParticipants > total &&
-          <div>
+          <Text id="quantities.minParticipants" fields={{ minParticipants }}>
             A minimun of {minParticipants} is required.
-          </div>}
-        {maxReached && <div>Maximum participants reached.</div>}
+          </Text>}
+        {maxReached &&
+          <Text id="quantities.maxReached">Maximum participants reached.</Text>}
       </div>
     );
   }

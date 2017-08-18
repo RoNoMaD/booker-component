@@ -1,6 +1,7 @@
-import { h, Component } from 'preact';
-
 // @flow
+import { h, Component } from 'preact';
+import TimeSlot from './timeslot';
+
 export default class TimeSlots extends Component {
   state = {
     loading: true
@@ -17,7 +18,7 @@ export default class TimeSlots extends Component {
     this.props.onSlotClick(timeSlot);
   };
 
-  render({}, { loading, timeSlots }) {
+  render(props, { loading, timeSlots }) {
     return (
       <div>
         {loading
@@ -55,18 +56,4 @@ export default class TimeSlots extends Component {
       </div>
     );
   }
-}
-
-function TimeSlot({ slot, onSlotClick }) {
-  const onClick = () => {
-    onSlotClick(slot);
-  };
-  return (
-    <button onClick={onClick}>
-      {new Date(slot.startDateTime).toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit'
-      })}
-    </button>
-  );
 }
