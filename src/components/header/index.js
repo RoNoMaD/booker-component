@@ -7,6 +7,7 @@ import SessionHeader from './sessionheader';
 import GiftHeader from './giftheader';
 
 const Header = ({
+  route,
   currentProduct,
   currentQuantities,
   currentDay,
@@ -19,6 +20,7 @@ const Header = ({
       (currentProduct._embedded.unit.type === 'MAIN' ||
         currentProduct._embedded.unit.type === 'FORFAIT') &&
       <MainHeader
+        route={route}
         currentProduct={currentProduct}
         currentQuantities={currentQuantities}
         currentExtrasQuantities={currentExtrasQuantities}
@@ -28,10 +30,10 @@ const Header = ({
     {currentProduct &&
       currentProduct.type === 'CLASSIC' &&
       currentProduct._embedded.unit.type === 'SESSION' &&
-      <SessionHeader currentProduct={currentProduct} />}
+      <SessionHeader route={route} currentProduct={currentProduct} />}
     {currentProduct &&
       currentProduct.type === 'GIFT' &&
-      <GiftHeader currentProduct={currentProduct} />}
+      <GiftHeader route={route} currentProduct={currentProduct} />}
   </header>;
 
 export default Header;

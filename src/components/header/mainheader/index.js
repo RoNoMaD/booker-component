@@ -1,7 +1,8 @@
 // @flow
 import { h } from 'preact';
-import { Text } from 'preact-i18n';
-import './style.scss';
+// Tell Babel to transform JSX into preact.h() calls:
+/** @jsx h */
+import style from './style.scss';
 
 import QuantitiesIcon from '../../icons/quantities';
 import CalendarIcon from '../../icons/calendar';
@@ -9,6 +10,7 @@ import SlotIcon from '../../icons/slot';
 import ExtrasIcon from '../../icons/extras';
 
 const MainHeader = ({
+  route,
   currentProduct,
   currentQuantities,
   currentDay,
@@ -16,32 +18,56 @@ const MainHeader = ({
   currentExtrasQuantities
 }) =>
   <nav>
-    <div>
-      <QuantitiesIcon />
-      <Text id="header.quantities">Quantities</Text>
+    <button class={style.tab}>
+      <QuantitiesIcon
+        color={`${route === 'quantities'
+          ? style.activeColor
+          : style.inactiveColor}`}
+      />
       {currentQuantities &&
-        <div>
+        <div class={`${route === 'quantities' ? style['label-active'] : ''}`}>
           {currentQuantities.total}
         </div>}
-    </div>
-    <div>
-      <CalendarIcon />
-      <Text id="header.day">Day</Text>
+    </button>
+    <button class={style.tab}>
+      <CalendarIcon
+        color={`${route === 'day' ? style.activeColor : style.inactiveColor}`}
+      />
       {currentDay &&
-        <div>
-          {currentDay.toISOString()}
+        <div class={`${route === 'day' ? style['label-active'] : ''}`}>
+          {`${currentDay
+            .getDate()
+            .toString()
+            .padStart(2, '0')}/${currentDay
+            .getMonth()
+            .toString()
+            .padStart(2, '0')}`}
         </div>}
-    </div>
-    <div>
-      <SlotIcon />
-      <Text id="header.slot">Slot</Text>
-    </div>
+    </button>
+    <button class={style.tab}>
+      <SlotIcon
+        color={`${route === 'slot' ? style.activeColor : style.inactiveColor}`}
+      />
+      {currentSlot &&
+        <div class={`${route === 'slot' ? style['label-active'] : ''}`}>
+          {`${new Date(currentSlot.startDateTime)
+            .getHours()
+            .toString()
+            .padStart(2, '0')}h${new Date(currentSlot.startDateTime)
+            .getMinutes()
+            .toString()
+            .padStart(2, '0')}`}
+        </div>}
+    </button>
     {currentProduct &&
       currentProduct._embedded.extraProducts &&
       currentProduct._embedded.extraProducts.length > 0 &&
-      <div>
-        <ExtrasIcon />
-        <Text id="header.extras">Extras</Text>
-      </div>}
+      <button class={style.tab}>
+        <ExtrasIcon
+          color={`${route === 'slot'
+            ? style.activeColor
+            : style.inactiveColor}`}
+        />
+      </button>}
   </nav>;
 export default MainHeader;

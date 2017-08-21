@@ -1,42 +1,28 @@
-$red: #ff4156;
-$orange: #ff6332;
-$bg-red-gradient: linear-gradient(-60deg, $orange, $red);
+// global colors variables
+@import "../../../style/colors.scss";
 
-.header {
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 100%;
+@value activeColor #{$red};
+@value inactiveColor #{$grey};
+
+.tab {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
   height: 56px;
-  padding: 0;
-  background: $bg-red-gradient;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-  z-index: 50;
-}
-
-.header nav {
-  float: right;
-  font-size: 100%;
-}
-
-.header nav div {
-  display: inline-block;
-  height: 56px;
-  line-height: 56px;
   padding: 0 15px;
   min-width: 50px;
   text-align: center;
   background: rgba(255, 255, 255, 0);
   text-decoration: none;
-  color: #fff;
+  color: $grey;
   will-change: background-color;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.1);
+  }
 }
 
-.header nav div:hover,
-.header nav a:active {
-  background: rgba(0, 0, 0, 0.2);
-}
-
-.header nav div.active {
-  background: rgba(0, 0, 0, 0.4);
+.label-active {
+  color: $red;
 }

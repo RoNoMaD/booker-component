@@ -1,6 +1,5 @@
 // @flow
 import { h } from 'preact';
-import { Link } from 'preact-router/match';
 import { Text } from 'preact-i18n';
 import style from './style.scss';
 

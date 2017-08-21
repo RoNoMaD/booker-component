@@ -40,6 +40,7 @@ export default class Extras extends Component {
   };
 
   render({ extras }, { quantities }) {
+    console.log(extras);
     return (
       <div>
         <Text id="extras.title">Extras</Text>

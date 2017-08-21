@@ -8,9 +8,7 @@
     "preact": "^8.2.1"
   },
   "dependencies": {
-    "preact": "^8.2.1",
     "preact-i18n": "^1.0.1",
-    "preact-router": "^2.5.5",
     "round-to": "^2.0.0"
   },
   "scripts": {

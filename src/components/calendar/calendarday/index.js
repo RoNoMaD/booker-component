@@ -11,12 +11,22 @@ export default function CalendarDay({
   available: boolean,
   onDayClick: Function
 }) {
+  let timeoutID;
   const onClick = () => {
-    onDayClick(day);
+    if (timeoutID) {
+      clearTimeout(timeoutID);
+    }
+    timeoutID = setTimeout(() => onDayClick(day), 1500);
   };
   return (
-    <td onClick={onClick} class={styles.day}>
-      {available ? 'Available' : day.getDate()}
+    <td class={styles.day}>
+      {available
+        ? <button class={styles.available} onClick={onClick}>
+            {day.getDate()}
+          </button>
+        : <div>
+            {day.getDate()}
+          </div>}
     </td>
   );
 }

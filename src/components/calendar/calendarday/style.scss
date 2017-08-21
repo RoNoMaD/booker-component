@@ -1,6 +1,28 @@
+// global colors variables
+@import "../../../style/colors.scss";
+
 .day {
   text-align: center;
+  color: $light-grey;
+  width: percentage(1/7);
+}
+
+@keyframes select {
+  0% {
+    color: $dark-grey;
+    background: none;
+  }
+  100% {
+    color: #fff;
+    background: $bg-red-gradient;
+  }
 }
 
 .available {
+  color: $dark-grey;
+
+  &:active {
+    border-radius: 100%;
+    animation: select 1.5s ease-in-out;
+  }
 }

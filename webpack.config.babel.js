@@ -41,7 +41,9 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'build'),
     filename: 'index.js',
-    libraryTarget: 'commonjs2' // THIS IS THE MOST IMPORTANT LINE! :mindblow: I wasted more than 2 days until realize this was the line most important in all this guide.
+    library: 'booker',
+    libraryTarget: 'umd' // THIS IS THE MOST IMPORTANT LINE! :mindblow: I wasted more than 2 days until realize this was the line most important in all this guide.
+    // libraryTarget: 'commonjs2' // THIS IS THE MOST IMPORTANT LINE! :mindblow: I wasted more than 2 days until realize this was the line most important in all this guide.
   },
   module: {
     rules: [
@@ -140,7 +142,8 @@ module.exports = {
     })
   ],
   externals: {
-    preact: 'commonjs preact' // this line is just to use the Preact dependency of our parent-testing-project instead of using our own Preact.
+    preact: 'preact' // this line is just to use the Preact dependency of our parent-testing-project instead of using our own Preact.
+    // preact: 'commonjs preact' // this line is just to use the Preact dependency of our parent-testing-project instead of using our own Preact.
   },
   devtool: ENV === 'production' ? 'source-map' : 'cheap-module-eval-source-map'
 };

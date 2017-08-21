@@ -88,6 +88,7 @@ export default class App extends Component {
   };
 
   setCurrentSlot = currentSlot => {
+    console.log('currentSlot', currentSlot);
     if (
       this.state.currentProduct._embedded.unit.type === 'MAIN' ||
       this.state.currentProduct._embedded.unit.type === 'FORFAIT'
@@ -118,7 +119,10 @@ export default class App extends Component {
       this.state.currentCompany
     )
       .then(order => {
-        this.setState({ currentOrder: order });
+        this.setState({ currentOrder: order }, () => {
+          console.log('this.props.setOrder', this.props.setOrder);
+          this.props.setOrder(this.state.currentOrder);
+        });
         return order;
       })
       .catch(error => {
@@ -208,6 +212,7 @@ export default class App extends Component {
           {error && <ErrorMsg error={error} />}
           {!loading &&
             <Header
+              route={route}
               currentProduct={currentProduct}
               currentQuantities={currentQuantities}
               currentExtrasQuantities={currentExtrasQuantities}
@@ -237,6 +242,7 @@ export default class App extends Component {
             route === 'extras' &&
             <Extras
               currentProduct={currentProduct}
+              extras={currentProduct._embedded.extraProducts}
               setCurrentQuantities={this.setCurrentExtrasQuantities}
             />}
           {!loading &&

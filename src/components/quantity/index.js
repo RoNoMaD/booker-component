@@ -1,5 +1,6 @@
 // @flow
 import { h } from 'preact';
+import style from './style.scss';
 
 export default function Quantity({
   unit,
@@ -33,14 +34,22 @@ export default function Quantity({
           : <div>
               {unit.name}
             </div>}
-      <div>
-        <button disabled={quantity === 0} onClick={subUnit}>
+      <div class={style.quantities}>
+        <button
+          disabled={quantity === 0}
+          onClick={subUnit}
+          class={style['quantity-button'] + ' ' + style.minus}
+        >
           -
         </button>
-        <div>
+        <div class={style.quantity}>
           {quantity}
         </div>
-        <button disabled={maxReached} onClick={addUnit}>
+        <button
+          disabled={maxReached}
+          onClick={addUnit}
+          class={style['quantity-button'] + ' ' + style.plus}
+        >
           +
         </button>
       </div>
