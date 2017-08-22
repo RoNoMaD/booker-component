@@ -141,16 +141,23 @@ export default class App extends Component {
   };
 
   setBeneficiary = currentBeneficiary => {
-    console.log(this.state.giftQuantity);
-    console.log(currentBeneficiary);
-    // TODO create gift booking api method
     createGiftBooking(
       this.state.currentProduct,
       this.state.giftQuantity,
       currentBeneficiary,
       this.state.currentOrder,
       this.state.currentCompany
-    );
+    )
+      .then(order => {
+        this.setState({ currentOrder: order }, () => {
+          console.log('this.props.setOrder', this.props.setOrder);
+          this.props.setOrder(this.state.currentOrder);
+        });
+        return order;
+      })
+      .catch(error => {
+        console.error('error creating booking', error);
+      });
   };
 
   componentDidMount() {
