@@ -1,5 +1,6 @@
 // @flow
 import { h, Component } from 'preact';
+import BookerContainer from '../bookercontainer';
 import TimeSlot from './timeslot';
 
 export default class TimeSlots extends Component {
@@ -9,7 +10,6 @@ export default class TimeSlots extends Component {
 
   componentDidMount() {
     this.props.productTimeSlotAvailabilities().then(timeSlots => {
-      console.log(timeSlots);
       this.setState({ timeSlots, loading: false });
     });
   }
@@ -20,7 +20,7 @@ export default class TimeSlots extends Component {
 
   render(props, { loading, timeSlots }) {
     return (
-      <div>
+      <BookerContainer>
         {loading
           ? <div>Loading</div>
           : <div>
@@ -53,7 +53,7 @@ export default class TimeSlots extends Component {
                   );
                 })}
             </div>}
-      </div>
+      </BookerContainer>
     );
   }
 }

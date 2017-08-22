@@ -1,0 +1,14 @@
+// spacing constant with a linear scale
+// that ensure a logical and consistent spacing between elements
+$spacingFactor: 8px;
+$space0: calc(#{$spacingFactor} / 2); // 4
+$space1: $spacingFactor; // 8
+$space2: calc(#{$spacingFactor} * 2); // 16
+$space3: calc(#{$spacingFactor} * 3); // 24
+$space4: calc(#{$spacingFactor} * 4); // 32
+$space5: calc(#{$spacingFactor} * 5); // 40
+$space6: calc(#{$spacingFactor} * 6); // 48
+
+$space8: calc(#{$spacingFactor} * 8); // 64
+$space9: calc(#{$spacingFactor} * 9); // 72
+$space13: calc(#{$spacingFactor} * 13); // 104

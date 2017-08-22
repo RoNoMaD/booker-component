@@ -1,7 +1,10 @@
 // @flow
 import { h, Component } from 'preact';
 import styles from './style.scss';
+import BookerContainer from '../bookercontainer';
 import CalendarDay from './calendarday';
+import ArrowLeft from '../icons/arrowleft';
+import ArrowRight from '../icons/arrowright';
 
 type Props = {
   getProductMonthAvailabilities: Function
@@ -83,65 +86,78 @@ export default class Calendar extends Component {
       );
     }
     return (
-      <div>
+      <BookerContainer>
         {loading
           ? <div>Loading...</div>
-          : <div>
-              <div>
-                <span>
-                  {today.toLocaleString('fr', { weekday: 'short' })}
-                </span>
-                <span>
-                  {today.toLocaleString('fr', { month: 'long' })}
-                </span>
-                <span>
-                  {today.getFullYear()}
-                </span>
-              </div>
-              <div>
-                {!(
-                  firstDayOfCurrentMonth.getMonth() === today.getMonth() &&
-                  firstDayOfCurrentMonth.getFullYear() === today.getFullYear()
-                ) && <button onClick={this.previousMonth}>Previous</button>}
-                <span>
-                  {firstDayOfCurrentMonth.toLocaleString('fr', {
-                    month: 'long'
-                  })}
-                </span>
-                <span>
-                  {firstDayOfCurrentMonth.getFullYear()}
-                </span>
-                <button onClick={this.nextMonth}>Next</button>
-              </div>
-              <table class={styles.calendar}>
-                <thead>
-                  <tr class={styles['week-days']}>
-                    {getWeekDays().map(weekDay =>
-                      <th key={weekDay}>
-                        {weekDay}
-                      </th>
-                    )}
-                  </tr>
-                </thead>
-                <tbody>
-                  {getWeekNumber(firstDayOfCurrentMonth).map((week, index) =>
-                    <tr key={index}>
-                      {week.map(day => {
-                        return (
-                          <CalendarDay
-                            key={day}
-                            day={day}
-                            available={isAvailable(day, availabilities)}
-                            onDayClick={this.onDayClick}
-                          />
-                        );
-                      })}
-                    </tr>
+          : <table class={styles.calendar}>
+              <thead>
+                <tr class={styles['month-heading']}>
+                  <th colSpan="1">
+                    <button
+                      class={styles['switch-month']}
+                      onClick={this.previousMonth}
+                      disabled={
+                        firstDayOfCurrentMonth.getMonth() ===
+                          today.getMonth() &&
+                        firstDayOfCurrentMonth.getFullYear() ===
+                          today.getFullYear()
+                      }
+                      class={styles['switch-month']}
+                    >
+                      <ArrowLeft
+                        color={
+                          firstDayOfCurrentMonth.getMonth() ===
+                            today.getMonth() &&
+                          firstDayOfCurrentMonth.getFullYear() ===
+                            today.getFullYear()
+                            ? styles.arrowColorDisabled
+                            : styles.arrowColor
+                        }
+                      />
+                    </button>
+                  </th>
+                  <th colSpan="5">
+                    <span class={styles.month}>
+                      {`${firstDayOfCurrentMonth.toLocaleString('fr', {
+                        month: 'long'
+                      })} ${firstDayOfCurrentMonth.getFullYear()}`}
+                    </span>
+                  </th>
+                  <th colSpan="1">
+                    <button
+                      onClick={this.nextMonth}
+                      class={styles['switch-month']}
+                    >
+                      <ArrowRight color={styles.arrowColor} />
+                    </button>
+                  </th>
+                </tr>
+                <tr class={styles['week-days']}>
+                  {getWeekDays().map(weekDay =>
+                    <th key={weekDay}>
+                      {weekDay}
+                    </th>
                   )}
-                </tbody>
-              </table>
-            </div>}
-      </div>
+                </tr>
+              </thead>
+              <tbody>
+                {getWeekNumber(firstDayOfCurrentMonth).map((week, index) =>
+                  <tr key={index}>
+                    {week.map(day => {
+                      return (
+                        <CalendarDay
+                          key={day}
+                          day={day}
+                          available={isAvailable(day, availabilities)}
+                          onDayClick={this.onDayClick}
+                        />
+                      );
+                    })}
+                  </tr>
+                )}
+              </tbody>
+            </table>}
+      </BookerContainer>
     );
   }
 }

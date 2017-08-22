@@ -1,13 +1,41 @@
+// global colors variables
+@import "../../style/colors.scss";
+// global spacing variables
+@import "../../style/spacing.scss";
+
+@value arrowColor #{$dark-grey};
+@value arrowColorDisabled #{$light-grey};
+
 .calendar {
   border-collapse: collapse;
 }
 
 .week-days {
-  border-bottom: 2px solid #dce3eb;
-  color: #dce3eb;
+  border-bottom: 2px solid $grey;
+  color: $grey;
   font-weight: bold;
   margin-bottom: 10px;
   font-size: 14px;
   line-height: 100%;
   margin-top: 10px;
+}
+
+.month-heading {
+  margin-bottom: $space0;
+}
+
+.month {
+  color: $dark-grey;
+  text-transform: capitalize;
+}
+
+.switch-month {
+  width: 24px;
+  height: 24px;
+
+  &:hover:enabled,
+  &:active:enabled {
+    border-radius: 100%;
+    background-color: $light-grey;
+  }
 }

@@ -1,8 +1,7 @@
 // @flow
 import { h, Component } from 'preact';
-// import { route } from 'preact-router';
-import style from './style.scss';
 import Button from '../button';
+import BookerContainer from '../bookercontainer';
 import UnitsQuantities from './unitsquantities';
 import SessionsQuantities from './sessionsquantities';
 
@@ -21,9 +20,8 @@ export default class Quantities extends Component {
   };
 
   render({ currentProduct }, { quantities, total }) {
-    console.log(currentProduct);
     return (
-      <div class={style.booker}>
+      <BookerContainer>
         {currentProduct &&
           (currentProduct._embedded.unit.type === 'MAIN' ||
             currentProduct._embedded.unit.type === 'FORFAIT') &&
@@ -57,7 +55,7 @@ export default class Quantities extends Component {
           }
           handleClick={this.onClickNext}
         />
-      </div>
+      </BookerContainer>
     );
   }
 }

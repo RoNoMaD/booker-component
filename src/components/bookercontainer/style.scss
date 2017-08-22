@@ -1,0 +1,8 @@
+// global spacing variables
+@import "../../style/spacing.scss";
+
+.booker-container {
+  margin: $space1;
+  min-height: 100%;
+  width: 100%;
+}

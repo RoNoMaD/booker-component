@@ -2,6 +2,7 @@
 import { h, Component } from 'preact';
 import { Text } from 'preact-i18n';
 import Extra from './extra';
+import BookerContainer from '../bookercontainer';
 import Button from '../button';
 
 export default class Extras extends Component {
@@ -42,7 +43,7 @@ export default class Extras extends Component {
   render({ extras }, { quantities }) {
     console.log(extras);
     return (
-      <div>
+      <BookerContainer>
         <Text id="extras.title">Extras</Text>
         {extras.map(extra =>
           <Extra
@@ -59,7 +60,7 @@ export default class Extras extends Component {
           disabled={quantities ? false : true}
           handleClick={this.onClickNext}
         />
-      </div>
+      </BookerContainer>
     );
   }
 }
