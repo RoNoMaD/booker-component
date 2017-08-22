@@ -13,8 +13,9 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "webpack --watch",
-    "build": "cross-env NODE_ENV=production webpack --progress -p"
+    "start": "cross-env NODE_ENV=production webpack --watch",
+    "build": "cross-env NODE_ENV=production webpack --progress -p",
+    "push:version": "yarn version && git push --tags origin HEAD:master"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.0",
