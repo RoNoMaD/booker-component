@@ -212,19 +212,76 @@ export function createGiftBooking(
   };
   if (!order && company) {
     return createOrder(company.id, company.type).then(order =>
-      postBooking(order.id, booking).then(bookings => {
-        order.bookings = bookings;
-        return order;
-      })
+      postBooking(order.id, booking)
+        .then(bookings => {
+          order.bookings = bookings;
+          return bookings[0];
+        })
+        .then(booking => {
+          return putUserClientData(
+            company.id,
+            booking._embedded.beneficiary.id,
+            beneficiary
+          );
+        })
+        .then(() => order)
     );
   } else if (order) {
-    return postBooking(order.id, booking).then(bookings => {
-      order.bookings = order.bookings.concat(bookings);
-      return order;
-    });
+    return postBooking(order.id, booking)
+      .then(bookings => {
+        order.bookings = order.bookings.concat(bookings);
+        return bookings[0];
+      })
+      .then(booking => {
+        return putUserClientData(
+          company.id,
+          booking._embedded.beneficiary.id,
+          beneficiary
+        );
+      })
+      .then(() => order);
   } else {
     throw new Error('Provide a company (id and type) or an order (id).');
   }
+}
+
+function putUserClientData(companyId, beneficiaryId, beneficiary) {
+  let userClientData = [
+    {
+      type: 'USER',
+      value: beneficiary.lastName,
+      clientFormInputType: {
+        id: 2
+      }
+    },
+    {
+      type: 'USER',
+      value: beneficiary.firstName,
+      clientFormInputType: {
+        id: 3
+      }
+    }
+  ];
+  if (beneficiary.phone) {
+    userClientData.push({
+      type: 'USER',
+      value: beneficiary.phone,
+      clientFormInputType: {
+        id: 5
+      }
+    });
+  }
+  return fetch(
+    `${API_ENDPOINT}/companies/${companyId}/users/${beneficiaryId}/user_client_data?access_token=${accessToken}`,
+    {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      method: 'PUT',
+      body: JSON.stringify(userClientData)
+    }
+  );
 }
 
 type Booking = {
